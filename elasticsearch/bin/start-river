@@ -1,5 +1,8 @@
 #!/bin/bash
 
+mydir=`dirname "$0"`
+src="$mydir/../src/mapper.js"
+
 curl -XPUT 'localhost:9200/_river/mydb/_meta' -d "$(cat <<JSCFG
 {
 	"type" : "mysql",
@@ -9,7 +12,7 @@ curl -XPUT 'localhost:9200/_river/mydb/_meta' -d "$(cat <<JSCFG
 		"verify_https" : false
 	},
 	"mysql" : {
-		"script" : "ctx.doc.test111 = 'test'; ctx.id = ctx.doc.tag_id;"
+		"script" : "$(cat "$src" | sed -e 's/"/\\"/g' | perl -pe 's/\x0a|\x0d|\t/ /g'); ctx = map(ctx);"
 	}
 }
 JSCFG
