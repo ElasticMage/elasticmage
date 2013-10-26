@@ -254,4 +254,9 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
     {
         $this->setOrder('a')->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
     }
+
+    function it_should_addSearchFilter_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->setOrder('a')->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
 }

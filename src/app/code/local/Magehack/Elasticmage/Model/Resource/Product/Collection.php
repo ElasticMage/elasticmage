@@ -220,4 +220,9 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
     {
         return $this;
     }
+
+    public function addSearchFilter($query)
+    {
+        return $this;
+    }
 }

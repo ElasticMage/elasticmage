@@ -1,6 +1,6 @@
 <?php
 
-class Magehack_Elasticmage_Model_Resource_Category_Collection extends Varien_Object//Mage_Catalog_Model_Resource_Category_Collection
+class Magehack_Elasticmage_Model_Resource_Category_Collection extends Mage_Catalog_Model_Resource_Category_Collection
 {
     public function addIdFilter($categoryIds)
     {
