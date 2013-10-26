@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Magehack_Elasticmage>
+            <active>true</active>
+            <codePool>community</codePool>
+            <depends></depends>
+        </Magehack_Elasticmage>
+    </modules>
+</config>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Magehack_Elasticmage>
+            <version>1.0.0</version>
+        </Magehack_Elasticmage>
+    </modules>
+    <global>
+        <blocks>
+            <magehack_elasticmage>
+                <class>Magehack_Elasticmage_Block</class>
+            </magehack_elasticmage>
+        </blocks>
+        <helpers>
+            <magehack_elasticmage>
+                <class>Magehack_Elasticmage_Helper</class>
+            </magehack_elasticmage>
+        </helpers>
+        <models>
+            <magehack_elasticmage>
+                <class>Magehack_Elasticmage_Model</class>
+            </magehack_elasticmage>
+        </models>
+        <resources>
+            <magehack_elasticmage_setup>
+                <setup>
+                    <module>Magehack_Elasticmage</module>
+                </setup>
+            </magehack_elasticmage_setup>
+        </resources>
+    </global>
+</config>
