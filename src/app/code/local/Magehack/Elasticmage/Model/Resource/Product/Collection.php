@@ -1,6 +1,6 @@
 <?php
 
-class Magehack_Elasticmage_Model_Resource_Product_Collection extends Varien_Object//Mage_Catalog_Model_Resource_Product_Collection
+class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalog_Model_Resource_Product_Collection
 {
 
     public function __construct($options = array())
@@ -51,7 +51,7 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Varien_Obje
         return $this;
     }
 
-    public function addAttributeToSelect()
+    public function addAttributeToSelect($attribute, $joinType = 'inner')
     {
         return $this;
     }
@@ -120,7 +120,7 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Varien_Obje
         return new Varien_Db_Select($this->_getReadAdapter());
     }
 
-    public function getAllIds()
+    public function getAllIds($limit = null, $offset = null)
     {
         return array();
     }
@@ -151,7 +151,7 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Varien_Obje
         return $this;
     }
 
-    public function addUrlRewrite()
+    public function addUrlRewrite($categoryId = '')
     {
         return $this;
     }
@@ -166,8 +166,58 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Varien_Obje
         return $this;
     }
 
-    public function getAllIdsCache()
+    public function getAllIdsCache($resetCache = false)
     {
         return array();
+    }
+
+    public function addPriceData($customerGroupId = null, $websiteId = null)
+    {
+        return $this;
+    }
+
+    public function addAttributeToFilter($attribute, $condition = null, $joinType = 'inner')
+    {
+        return $this;
+    }
+
+    public function addOptionsToResult()
+    {
+        return $this;
+    }
+
+    public function addAttributeToSort($attribute, $dir = Mage_Catalog_Model_Resource_Product_Collection::SORT_ORDER_ASC)
+    {
+       return $this;
+    }
+
+    public function applyFrontendPriceLimitations()
+    {
+        return $this;
+    }
+
+    public function addCategoryIds()
+    {
+        return $this;
+    }
+
+    public function addTierPriceData()
+    {
+        return $this;
+    }
+
+    public function addPriceDataFieldFilter($comparisonFormat, $fields)
+    {
+        return $this;
+    }
+
+    public function clear()
+    {
+        return $this;
+    }
+
+    public function setOrder($attribute, $dir = 'desc')
+    {
+        return $this;
     }
 }
