@@ -7,6 +7,14 @@ use Prophecy\Argument;
 
 class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectBehavior
 {
+    private $_connection;
+
+    function let(\Elasticsearch\Client $connection)
+    {
+        $this->_connection = $connection;
+        $this->beConstructedWith(array('connection' => $connection));
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType('Magehack_Elasticmage_Model_Resource_Product_Collection');
@@ -125,5 +133,75 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
     function it_should_getMaxAttributeValue_return_with_null_in_case_of_not_existing_data()
     {
         $this->getMaxAttributeValue(null)->shouldBe(null);
+    }
+
+    function it_should_getAttributeValueCountByRange_return_array()
+    {
+        $this->getAttributeValueCountByRange('a', 10)->shouldBeArray();
+    }
+
+    function it_should_getAttributeValueCount_return_array()
+    {
+        $this->getAttributeValueCount('a')->shouldBeArray();
+    }
+
+    function it_should_getAllAttributeValues_return_array()
+    {
+        $this->getAllAttributeValues('a')->shouldBeArray();
+    }
+
+    function it_should_getSelectCountSql_returns_varien_db_select()
+    {
+        $this->getSelectCountSql()->shouldBeAnInstanceOf('Varien_Db_Select');
+    }
+
+    function it_should_getAllIds_return_array()
+    {
+        $this->getAllIds()->shouldBeArray();
+    }
+
+    function it_should_getProductCountSelect()
+    {
+        $this->getProductCountSelect()->shouldBeAnInstanceOf('Varien_Db_Select');
+    }
+
+    function it_should_addCountToCategories_return_Magehack_Elasticmage_Model_Resource_Product_Collection(\Varien_Object $categoryCollection)
+    {
+        $this->addCountToCategories($categoryCollection)->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_getSetIds_return_array()
+    {
+        $this->getSetIds()->shouldBeArray();
+    }
+
+    function it_should_getProductTypeIds_return_array()
+    {
+        $this->getProductTypeIds()->shouldBeArray();
+    }
+
+    function it_should_joinUrlRewrite_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->joinUrlRewrite()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_addUrlRewrite_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+       $this->addUrlRewrite()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_addMinimalPrice_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->addMinimalPrice()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_addFinalPrice_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->addFinalPrice()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_getAllIdsCache_return_array()
+    {
+        $this->getAllIdsCache()->shouldBeArray();
     }
 }
