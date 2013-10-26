@@ -61,4 +61,6 @@ class Streamer(object):
     index.exposed = True
     index._cp_config = {"response.stream": True}
 
-cherrypy.quickstart(Streamer())
+
+if __name__ == "__main__":
+	cherrypy.quickstart(Streamer())
