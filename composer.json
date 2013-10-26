@@ -10,6 +10,13 @@
         }
     ],
     "require": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon/magento-composer-installer": "*",
+        "elasticsearch/elasticsearch": "0.4.1"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/magento-hackathon/magento-composer-installer"
+        }
+    ]
 }
