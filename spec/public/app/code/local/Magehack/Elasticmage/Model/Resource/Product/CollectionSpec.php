@@ -57,7 +57,7 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
 
     function it_should_addAttributeToSelect_return_with_Magehack_Elasticmage_Model_Resource_Product_Collection()
     {
-        $this->addAttributeToSelect()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+        $this->addAttributeToSelect('a')->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
     }
 
     function it_should_addIdFilter_return_with_Magehack_Elasticmage_Model_Resource_Product_Collection()
@@ -203,5 +203,55 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
     function it_should_getAllIdsCache_return_array()
     {
         $this->getAllIdsCache()->shouldBeArray();
+    }
+
+    function it_should_addPriceData_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->addPriceData()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_addAttributeToFilter_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->addAttributeToFilter('a')->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_addOptionsToResult_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->addOptionsToResult()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_addAttributeToSort_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->addAttributeToSort('a')->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_applyFrontendPriceLimitations_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->applyFrontendPriceLimitations()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_addCategoryIds_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->addCategoryIds()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_addTierPriceData_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->addTierPriceData()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_addPriceDataFieldFilter_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->addPriceDataFieldFilter('', array())->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_clear_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->clear()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_should_setOrder_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
+    {
+        $this->setOrder('a')->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
     }
 }
