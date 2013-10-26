@@ -1,5 +1,5 @@
 {
-    "name": "your-vendor-name/module-name",
+    "name": "magehack/elasticmage",
     "type": "magento-module",
     "license":"OSL-3.0",
     "description":"A short one line description of your module",
