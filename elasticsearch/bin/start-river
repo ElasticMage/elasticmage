@@ -1,14 +1,15 @@
 #!/bin/bash
 
-curl -XPUT 'localhost:9200/river/mydb/meta' -d "$(cat <<JSCFG
+curl -XPUT 'localhost:9200/_river/mydb/_meta' -d "$(cat <<JSCFG
 {
 	"type" : "mysql",
 	"streamer" : {
 		"host" : "localhost",
-		"port" : 8080
+		"port" : 8080,
+		"verify_https" : false
 	},
 	"mysql" : {
-		"script" : "ctx.doc.test111 = 'test';"
+		"script" : "ctx.doc.test111 = 'test'; ctx.id = ctx.doc.tag_id;"
 	}
 }
 JSCFG
