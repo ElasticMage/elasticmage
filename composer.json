@@ -14,8 +14,10 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "magento-hackathon/magento-composer-installer": "*"
     },
+    "type": "magento-module",
     "require-dev": {
         "magetest/magento-phpspec-extension": "dev-develop",
         "behat/behat":"*",
