@@ -1,0 +1,37 @@
+#!/bin/bash
+
+curl -XPUT 'localhost:9200/magehack/product/1' -d "$(cat <<JSCFG
+{
+    "name": "Product 1",
+    "sku": "00001",
+    "categories": [
+        1,
+        2,
+        3
+    ],
+    "description": "My first product",
+    "price": 100.000,
+    "url_key": "product-1",
+    "visibility": 4,
+    "created_at": "2013-10-28 11:00:00"
+}
+JSCFG
+)"
+
+curl -XPUT 'localhost:9200/magehack/product/2' -d "$(cat <<JSCFG
+{
+    "name": "Product 2",
+    "sku": "00002",
+    "categories": [
+        3,
+        4,
+        5
+    ],
+    "description": "My second product",
+    "price": 50.000,
+    "url_key": "product-2",
+    "visibility": 4,
+    "created_at": "2013-10-28 12:00:00"
+}
+JSCFG
+)"
