@@ -24,7 +24,7 @@ curl -XPUT 'localhost:9200/magehack/product/2' -d "$(cat <<JSCFG
     "sku": "00002",
     "categories": [
         3,
-        4,
+        10,
         5
     ],
     "description": "My second product",
