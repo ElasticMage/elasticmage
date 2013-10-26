@@ -12,13 +12,17 @@ class MageMapper(object):
 			pass
 
 		if data["table"] != "catalog_product_entity":
-			label = self.attributes.getLabel(data["doc"]["entity_type_id"], data["doc"]["attribute_id"])
-			data["table"] = "catalog_product_entity"
-			data["action"] = "update"
-			doc = {}
-			doc["entity_id"] = data["doc"]["entity_id"]
-			doc[label] = data["doc"]["value"]
-			data["doc"] = doc
-
+			return self.__map_eav_child_table(data)
 
 		return data
+
+	def __map_eav_child_table(self, data):
+		label = self.attributes.getLabel(data["doc"]["entity_type_id"], data["doc"]["attribute_id"])
+		data["table"] = "catalog_product_entity"
+		data["action"] = "update"
+		doc = {}
+		doc["entity_id"] = data["doc"]["entity_id"]
+		doc[label] = data["doc"]["value"]
+		data["doc"] = doc
+		return data
+

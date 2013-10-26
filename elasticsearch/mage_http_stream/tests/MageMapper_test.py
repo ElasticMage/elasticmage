@@ -64,4 +64,3 @@ class MageMapper_(unittest.TestCase):
 
 
 
-
