@@ -1,0 +1,3 @@
+[submodule "elasticsearch/river"]
+	path = elasticsearch/river
+	url = https://github.com/scharron/elasticsearch-river-mysql.git
