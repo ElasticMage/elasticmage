@@ -3,7 +3,7 @@
     <modules>
         <Magehack_Elasticmage>
             <active>true</active>
-            <codePool>community</codePool>
+            <codePool>local</codePool>
             <depends></depends>
         </Magehack_Elasticmage>
     </modules>
