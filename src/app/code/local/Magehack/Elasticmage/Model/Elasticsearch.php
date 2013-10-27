@@ -2,7 +2,7 @@
 
 class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
 {
-    protected $_host = '192.168.33.99';
+    protected $_host = '127.0.0.1';
     protected $_client = null;
     protected $_params = array();
     protected $_query = array();
