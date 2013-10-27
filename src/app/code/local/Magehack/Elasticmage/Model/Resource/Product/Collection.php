@@ -9,7 +9,7 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
         if(isset($options['elasticsearch'])){
             $this->_elasticsearch = $options['elasticsearch'];
         }else{
-            $this->_elasticsearch = Mage::getModel('magehack_elasticmage/elasticsearch');
+            $this->_elasticsearch = Mage::getSingleton('magehack_elasticmage/elasticsearch');
         }
     }
 
@@ -23,9 +23,115 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
         return $this;
     }
 
+    protected function _productLimitationJoinStore()
+    {
+        return $this;
+    }
+
+    protected function _productLimitationJoinWebsite()
+    {
+        return $this;
+    }
+
+    protected function _productLimitationJoinPrice()
+    {
+        return $this;
+    }
+
     protected function _applyProductLimitations()
     {
-        //TODO:implement
+        Mage::dispatchEvent('catalog_product_collection_apply_limitations_before', array(
+            'collection'  => $this,
+            'category_id' => isset($this->_productLimitationFilters['category_id'])
+                    ? $this->_productLimitationFilters['category_id']
+                    : null,
+        ));
+
+        $conditions = array();
+
+        $this->_prepareProductLimitationFilters();
+
+        if (isset($this->_productLimitationFilters['website_ids'])) {
+//TODO: Implement IN search
+/*
+            //$conditions['website_id'] = $this->_productLimitationFilters['website_ids'];
+*/
+        } elseif (isset($this->_productLimitationFilters['store_id'])
+            && (!isset($this->_productLimitationFilters['visibility']) && !isset($this->_productLimitationFilters['category_id']))
+            && !$this->isEnabledFlat()
+        ) {
+            $conditions['website_id'] = Mage::app()->getStore($this->_productLimitationFilters['store_id'])->getWebsiteId();
+        }
+
+        if (isset($this->_productLimitationFilters['website_id'])) {
+            $conditions['website_id'] = $this->_productLimitationFilters['website_id'];
+        }
+
+        if (isset($this->_productLimitationFilters['customer_group_id'])) {
+            $conditions['customer_group_id'] = $this->_productLimitationFilters['customer_group_id'];
+        }
+
+/*
+  //TODO: Implement price index filter
+        if (!isset($fromPart['price_index'])) {
+            $least       = $connection->getLeastSql(array('price_index.min_price', 'price_index.tier_price'));
+            $minimalExpr = $connection->getCheckSql('price_index.tier_price IS NOT NULL',
+                $least, 'price_index.min_price');
+            $colls       = array('price', 'tax_class_id', 'final_price',
+                'minimal_price' => $minimalExpr , 'min_price', 'max_price', 'tier_price');
+            $tableName = array('price_index' => $this->getTable('catalog/product_index_price'));
+            if ($joinLeft) {
+                $select->joinLeft($tableName, $joinCond, $colls);
+            } else {
+                $select->join($tableName, $joinCond, $colls);
+            }
+            // Set additional field filters
+            foreach ($this->_priceDataFieldFilters as $filterData) {
+                $select->where(call_user_func_array('sprintf', $filterData));
+            }
+        } else {
+            $fromPart['price_index']['joinCondition'] = $joinCond;
+            $select->setPart(Zend_Db_Select::FROM, $fromPart);
+        }
+        //Clean duplicated fields
+        $helper->prepareColumnsList($select);
+*/
+
+        if (!isset($this->_productLimitationFilters['category_id']) && !isset($this->_productLimitationFilters['visibility'])) {
+            return $this;
+        }
+
+        $conditions['store_id'] = $this->_productLimitationFilters['store_id'];
+
+        //TODO: Implement IN search
+/*
+        if (isset($this->_productLimitationFilters['visibility']) && !isset($this->_productLimitationFilters['store_table'])) {
+            $conditions['visibility'] = $this->_productLimitationFilters['visibility'];
+        }
+*/
+        if (!$this->getFlag('disable_root_category_filter')) {
+            $conditions['categories'] = $this->_productLimitationFilters['category_id'];
+        }
+
+        if (isset($this->_productLimitationFilters['category_is_anchor'])) {
+            $conditions['is_parent'] = $this->_productLimitationFilters['category_is_anchor'];
+        }
+
+        $sort = array(
+            array('cat_index_position' => 'asc')
+        );
+
+        //disable the filters temporarily
+        //unset($conditions['store_id']);
+        unset($conditions['categories']);
+
+        $this->_elasticsearch->setFilters($conditions);
+        $this->_elasticsearch->setSort($sort);
+
+        Mage::dispatchEvent('catalog_product_collection_apply_limitations_after', array(
+            'collection' => $this
+        ));
+
         return $this;
     }
 
@@ -268,6 +374,7 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
 
     public function _loadEntities($printQuery = false, $logQuery = false)
     {
+        //$this->_elasticsearch->setLimitPage($this->getCurPage(), $this->_pageSize);
         $data = $this->_elasticsearch->getProductData();
 
         foreach ($data as $v) {
@@ -287,5 +394,4 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
     {
         return $this->_elasticsearch->getProductCount();
     }
-
 }

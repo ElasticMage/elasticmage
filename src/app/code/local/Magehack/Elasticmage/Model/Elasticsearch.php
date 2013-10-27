@@ -5,6 +5,7 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
     protected $_host = '192.168.33.99';
     protected $_client = null;
     protected $_params = array();
+    protected $_query = array();
 
     public function __construct($services = array())
     {
@@ -18,16 +19,7 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
 
     public function getAllIds()
     {
-        /*$json = '{
-            "fields" : {
-                "_id"
-            },
-            "query" : {
-                "match_all" : {}
-            }
-        }';*/
-
-        $json = array(
+        $this->_query = array(
             'fields' => array(
                 '_id'
             ),
@@ -36,28 +28,20 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
             )
         );
 
-        $params['index'] = 'magehack';
-        $params['type']  = 'product';
-        $params['body']  = $json;
-
-        $response = $this->_client->search($params);
+        $response = $this->_sendSearchQuery();
 
         return array_map(function ($el) { return (int)$el['_id'];}, $response['hits']['hits'] );
     }
 
     public function getProductData()
     {
-        $json = array(
+        $this->_query = array(
             'query' => array(
                 'match_all' => array()
             )
         );
 
-        $params['index'] = 'magehack';
-        $params['type']  = 'product';
-        $params['body']  = $json;
-
-        $response = $this->_client->search($params);
+        $response = $this->_sendSearchQuery();
 
         $returnArray = array();
         foreach ($response['hits']['hits'] as $item) {
@@ -69,14 +53,62 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
 
     public function getProductCount()
     {
-        $json = array('match_all'=>array());
+        $this->_query = array('match_all'=>array());
+
+        $response = $this->_sendCountQuery();
+
+        return $response['count'];
+    }
+
+    protected function _applyFilters()
+    {
+        if (!empty($this->_query) && is_array($this->_query)) {
+            $filters = $this->getFilters();
+
+            if (!empty($filters) && isset($this->_query['query'])) {
+                $this->_query['query']['filtered']['query'] = $this->_query['query'];
+                unset($this->_query['query']['match_all']);
+                $this->_addFilterQuery();
+            }
+        }
+
+        return $this;
+    }
+
+    protected function _applyPagination()
+    {
+        if (isset())
+    }
+
+    protected function _addFilterQuery()
+    {
+        $this->_query['query']['filtered']['filter']['term'] = $this->getFilters();
+
+        return $this;
+    }
+
+    protected function _sendSearchQuery()
+    {
+        $this->_applyFilters();
+        $this->_applyPagination();
+
+        $this->setFilters(null);
 
         $params['index'] = 'magehack';
         $params['type']  = 'product';
-        $params['body']  = $json;
+        $params['body']  = $this->_query;
 
-        $response = $this->_client->count($params);
+        return $this->_client->search($params);
+    }
 
-        return $response['count'];
+    protected function _sendCountQuery()
+    {
+        $this->setFilters(null);
+
+        $params['index'] = 'magehack';
+        $params['type']  = 'product';
+        $params['body']  = $this->_query;
+
+        return $this->_client->count($params);
     }
 }
