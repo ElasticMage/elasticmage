@@ -3,6 +3,8 @@
 class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalog_Model_Resource_Product_Collection
 {
 
+    private $conditions = array();
+
     public function __construct($options = array())
     {
         parent::__construct();
@@ -123,10 +125,8 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
 
         //disable the filters temporarily
         //unset($conditions['store_id']);
-        unset($conditions['categories']);
 
-        $this->_elasticsearch->setFilters($conditions);
-        $this->_elasticsearch->setSort($sort);
+        $this->conditions = $conditions;
 
         Mage::dispatchEvent('catalog_product_collection_apply_limitations_after', array(
             'collection' => $this
@@ -370,7 +370,8 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
             $this->_calculateFromParameter(
                 $this->_curPage, $this->_pageSize
             ),
-            (int) $this->_pageSize
+            (int) $this->_pageSize,
+            $this->conditions
         );
 
         foreach ($data as $v) {

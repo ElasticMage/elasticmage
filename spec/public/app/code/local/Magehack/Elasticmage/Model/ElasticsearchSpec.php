@@ -90,18 +90,7 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
 
 
         $this->getProductData()->shouldReturn(
-            array(
-                array(
-                    "entity_id" => "1",
-                    "sku" => "a1a",
-                    "name" => "Product 1",
-                ),
-                array(
-                    "entity_id" => "2",
-                    "sku" => "a2a",
-                    "name" => "Product 2",
-                )
-            )
+            $this->_getSampleProductResultData()
         );
     }
 
@@ -147,18 +136,38 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
 
 
         $this->getProductData(1, 2)->shouldReturn(
-            array(
-                array(
-                    "entity_id" => "1",
-                    "sku" => "a1a",
-                    "name" => "Product 1",
-                ),
-                array(
-                    "entity_id" => "2",
-                    "sku" => "a2a",
-                    "name" => "Product 2",
+            $this->_getSampleProductResultData()
+        );
+    }
+
+    function it_applies_query_filters_for_product_loading()
+    {
+        $json = array(
+            'query' => array(
+                'filtered' => array(
+                    'query' => array( "match_all" => array() ),
+                    'filter' => array(
+                        "term" => array( "categories" => 10 )
+                    )
                 )
             )
+        );
+
+        $params['index'] = 'magehack';
+        $params['type']  = 'product';
+        $params['body']  = $json;
+
+        $return = $this->_getProductSampleData();
+
+        $this->_connection->search($params)->willReturn($return);
+
+
+        $filters = array(
+            'categories' => 10,
+        );
+
+        $this->getProductData(0, 0, $filters)->shouldReturn(
+            $this->_getSampleProductResultData()
         );
     }
 
@@ -204,6 +213,22 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
                         ),
                     ),
                 ),
+            )
+        );
+    }
+
+    private function _getSampleProductResultData()
+    {
+        return array(
+            array(
+                "entity_id" => "1",
+                "sku" => "a1a",
+                "name" => "Product 1",
+            ),
+            array(
+                "entity_id" => "2",
+                "sku" => "a2a",
+                "name" => "Product 2",
             )
         );
     }

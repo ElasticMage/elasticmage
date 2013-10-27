@@ -258,7 +258,7 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
 
     function it_loads_product_data()
     {
-        $this->_elasticsearch->getProductData(0, 0)->willReturn(
+        $this->_elasticsearch->getProductData(0, 0, array())->willReturn(
             $this->_getSampleProductData()
         );
         $this->load();
@@ -268,13 +268,31 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
 
     function it_loads_product_data_with_limits()
     {
-        $this->_elasticsearch->getProductData(1*2, 2)->willReturn(
+        $this->_elasticsearch->getProductData(1*2, 2, array())->willReturn(
             $this->_getSampleProductData()
         );
 
         $this->setCurPage(1);
         $this->setPageSize(2);
 
+        $this->load();
+
+        $this->_validateLoadedSampleProducts();
+    }
+
+    function it_loads_product_data_with_category_filter()
+    {
+        $this->_elasticsearch->getProductData(
+            0, 0, array("categories" => 30, "is_parent" => 1)
+        )->willReturn(
+            $this->_getSampleProductData()
+        );
+
+
+        $category = new \Mage_Catalog_Model_Category();
+        $category->setData(array('entity_id'=>30, 'is_anchor'=>false));
+
+        $this->addCategoryFilter($category);
         $this->load();
 
         $this->_validateLoadedSampleProducts();
