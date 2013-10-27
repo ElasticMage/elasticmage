@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+test -f ~/dbdumpdata.sql.gz || ( mysqldump --replace=true --no-create-info=true -uroot -proot elasticmage | gzip > ~/dbdumpdata.sql.gz )
+
+echo 'show tables' | mysql -uroot -proot elasticmage | grep 'catalog_product_entity\|catalog_category_product' | while read t ; do echo "truncate $t" | mysql -uroot -proot elasticmage; done
+
+zcat ~/dbdumpdata.sql.gz | mysql -uroot -proot elasticmage
+
