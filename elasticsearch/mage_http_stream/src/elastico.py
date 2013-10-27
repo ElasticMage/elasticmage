@@ -79,16 +79,22 @@ class Streamer(object):
 if __name__ == "__main__":
     connection = pymysql.connect(**mysql_settings)
     for event in Streamer(MageMapper(MageAttributes(connection))).index():
-		if event["action"] == "insert":
-			requests.put("http://localhost:9200/magehack/product/"+str(event["id"]), json.dumps(event["doc"], default=default))
-		elif event["action"] == "update":
-			r = requests.get("http://localhost:9200/magehack/product/"+str(event["id"]))
-			if r.status_code == 200:
-				orig = json.loads(r.text)
-				if orig["exists"]:
-				    event["doc"] = dict(orig["_source"].items() + event["doc"].items())
-			requests.put("http://localhost:9200/magehack/product/"+str(event["id"]), json.dumps(event["doc"], default=default))
-#			print "update: ", event
-# 			requests.put("http://localhost:9200/magehack/product/"+str(event["id"])+"/_update", json.dumps({"doc":event["doc"], "doc_as_upsert" : "true", "retry_on_conflict": 100}, default=default))
+#        if event["action"] == "insert":
+#            requests.put("http://localhost:9200/magehack/product/"+str(event["id"]), json.dumps(event["doc"], default=default))
+#        elif event["action"] == "update":
+            r = requests.get("http://localhost:9200/magehack/product/"+str(event["id"]))
+            if r.status_code == 200:
+                orig = json.loads(r.text)
+                if orig["exists"]:
+                    event["doc"] = dict(orig["_source"].items() + event["doc"].items())
+                    try:
+                        event["doc"]["categories"] = list ( set( orig["_source"]["categories"] + event["doc"]["categories"] ) )
+                        event["doc"]["category_pos"] = dict(orig["_source"]["category_pos"].items() + event["doc"]["category_pos"].items())
+                        print "merged categories: ", event["doc"]["categories"]
+                    except:
+                        pass
+            requests.put("http://localhost:9200/magehack/product/"+str(event["id"]), json.dumps(event["doc"], default=default))
+#            print "update: ", event
+#             requests.put("http://localhost:9200/magehack/product/"+str(event["id"])+"/_update", json.dumps({"doc":event["doc"], "doc_as_upsert" : "true", "retry_on_conflict": 100}, default=default))
 
 
