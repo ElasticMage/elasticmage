@@ -5,29 +5,58 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
 
     public function __construct($options = array())
     {
-        if(isset($options['connection'])){
-            $this->_connection = $options['connection'];
+        parent::__construct();
+        if(isset($options['elasticsearch'])){
+            $this->_elasticsearch = $options['elasticsearch'];
         }else{
-           // TODO: Insert real Elasticsearch connection initialise here
+            $this->_elasticsearch = Mage::getModel('magehack_elasticmage/elasticsearch');
         }
     }
+
     protected function _getReadAdapter()
     {
         return Mage::getSingleton('core/resource')->getConnection('core_read');
     }
 
+    protected function _initTables()
+    {
+        return $this;
+    }
+
+    protected function _applyProductLimitations()
+    {
+        //TODO:implement
+        return $this;
+    }
+
+    /**
+     * Apply limitation filters to collection base on API
+     * Method allows using one time category product table
+     * for combinations of category_id filter states
+     *
+     * @return Mage_Catalog_Model_Resource_Product_Collection
+     */
+    protected function _applyZeroStoreProductLimitations()
+    {
+        //TODO:implement
+        return $this;
+    }
+
     public function getCatalogPreparedSelect()
     {
+        //TODO:CHECK
         return new Varien_Db_Select($this->_getReadAdapter());
     }
 
     protected function _preparePriceExpressionParameters($select)
     {
+        //TODO:CHECK
         return $this;
     }
 
     public function getPriceExpression($select = null)
     {
+        //TODO:CHECK
         return new Varien_Db_Select($this->_getReadAdapter());
     }
 
@@ -39,11 +68,6 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
     public function isEnabledElastic()
     {
         return true;
-    }
-
-    public function getNewEmptyItem()
-    {
-        return new Varien_Object();
     }
 
     public function _loadAttributes($printQuery = false, $logQuery = false)
@@ -58,6 +82,7 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
 
     public function addIdFilter($productId, $exclude = false)
     {
+        //TODO: implement
         return $this;
     }
 
@@ -66,33 +91,15 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
         return $this;
     }
 
-    public function addStoreFilter($store = null)
-    {
-        return $this;
-    }
-
-    public function addWebsiteFilter($websites = null)
-    {
-        return $this;
-    }
-
     public function getLimitationFilters()
     {
+        //TODO: implement
         return array();
-    }
-
-    public function addCategoryFilter(Mage_Catalog_Model_Category $category)
-    {
-        return $this;
-    }
-
-    public function joinMinimalPrice()
-    {
-        return $this;
     }
 
     public function getMaxAttributeValue($attribute)
     {
+        //TODO: implement
         if (!is_null($attribute)) {
             return max($attribute);
         } else {
@@ -102,11 +109,13 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
 
     public function getAttributeValueCountByRange($attribute, $range)
     {
+        //TODO: implement
         return array();
     }
 
     public function getAttributeValueCount($argument1)
     {
+        //TODO: implement
         return array();
     }
 
@@ -122,7 +131,7 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
 
     public function getAllIds($limit = null, $offset = null)
     {
-        return array();
+        return $this->_elasticsearch->getAllIds();
     }
 
     public function getProductCountSelect()
@@ -225,4 +234,58 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
     {
         return $this;
     }
+
+    public function load($printQuery = false, $logQuery = false)
+    {
+        if ($this->isLoaded()) {
+            return $this;
+        }
+        Varien_Profiler::start('__EAV_COLLECTION_BEFORE_LOAD__');
+        Mage::dispatchEvent('eav_collection_abstract_load_before', array('collection' => $this));
+        $this->_beforeLoad();
+        Varien_Profiler::stop('__EAV_COLLECTION_BEFORE_LOAD__');
+
+        $this->_renderFilters();
+        $this->_renderOrders();
+
+        Varien_Profiler::start('__EAV_COLLECTION_LOAD_ENT__');
+        $this->_loadEntities($printQuery, $logQuery);
+        Varien_Profiler::stop('__EAV_COLLECTION_LOAD_ENT__');
+
+        Varien_Profiler::start('__EAV_COLLECTION_ORIG_DATA__');
+        foreach ($this->_items as $item) {
+            $item->setOrigData();
+        }
+        Varien_Profiler::stop('__EAV_COLLECTION_ORIG_DATA__');
+
+        $this->_setIsLoaded();
+        Varien_Profiler::start('__EAV_COLLECTION_AFTER_LOAD__');
+        $this->_afterLoad();
+        Varien_Profiler::stop('__EAV_COLLECTION_AFTER_LOAD__');
+        return $this;
+    }
+
+
+    public function _loadEntities($printQuery = false, $logQuery = false)
+    {
+        $data = $this->_elasticsearch->getProductData();
+
+        foreach ($data as $v) {
+            $object = $this->getNewEmptyItem()
+                ->setData($v);
+            $this->addItem($object);
+            if (isset($this->_itemsById[$object->getId()])) {
+                $this->_itemsById[$object->getId()][] = $object;
+            } else {
+                $this->_itemsById[$object->getId()] = array($object);
+            }
+        }
+        return $this;
+    }
+
+    public function getSize()
+    {
+        return $this->_elasticsearch->getProductCount();
+    }
+
 }

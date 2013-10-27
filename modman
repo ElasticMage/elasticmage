@@ -1,3 +1,3 @@
 src/app/code/local/Magehack/Elasticmage     app/code/local/Magehack/Elasticmage
 src/app/etc/modules/*    app/etc/modules/
-../../elasticsearch/elasticsearch/src/Elasticsearch lib/elasticsearch
+../../elasticsearch/elasticsearch/src/Elasticsearch lib/Elasticsearch

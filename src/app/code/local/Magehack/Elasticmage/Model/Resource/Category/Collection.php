@@ -2,6 +2,15 @@
 
 class Magehack_Elasticmage_Model_Resource_Category_Collection extends Mage_Catalog_Model_Resource_Category_Collection
 {
+    /**
+     * Init collection and determine table names
+     *
+     */
+    protected function _construct()
+    {
+        $this->_init('magehack_elasticmage/category');
+    }
+
     public function addIdFilter($categoryIds)
     {
         return $this;
