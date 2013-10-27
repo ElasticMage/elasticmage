@@ -71,3 +71,26 @@ class MageMapper_(unittest.TestCase):
 				}
 			}
 		)
+
+	def test_if_it_reforms_category_relation(self):
+		eq_(
+			MageMapper().map({
+				"action" : "insert",
+				"table" : "catalog_category_product",
+				"doc" : {
+					"category_id" : "12",
+					"product_id" : "42",
+					"position" : "9"
+				}
+			}),
+			{
+				"action" : "update",
+				"table" : "catalog_product_entity",
+				"id" : "42",
+				"doc" : {
+					"categories" : [
+						{"id" : "12", "pos" : "9"}
+					]
+				}
+			}
+		)

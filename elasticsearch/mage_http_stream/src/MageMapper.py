@@ -6,6 +6,9 @@ class MageMapper(object):
 		self.attributes = attributes
 
 	def map(self, data):
+		if data["table"] == "catalog_category_product":
+			return self.__map_catagory_relations(data)
+
 		if not data["table"].startswith("catalog_product_entity"):
 			return None
 
@@ -32,3 +35,17 @@ class MageMapper(object):
 		except:
 			print "unsupported data", data
 
+	def __map_catagory_relations(self, data):
+		ret = {}
+		ret["action"] = "update"
+		ret["table"] = "catalog_product_entity"
+		ret["id"] = data["doc"]["product_id"]
+		ret["doc"] = {
+			"categories": [
+				{ 
+					"id" : data["doc"]["category_id"],
+					"pos" : data["doc"]["position"]
+				}
+			]
+		}
+		return ret
