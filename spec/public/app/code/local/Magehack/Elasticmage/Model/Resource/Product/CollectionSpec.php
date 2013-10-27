@@ -268,7 +268,7 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
 
     function it_loads_product_data_with_limits()
     {
-        $this->_elasticsearch->getProductData(1*2, 2, array())->willReturn(
+        $this->_elasticsearch->getProductData(0, 2, array())->willReturn(
             $this->_getSampleProductData()
         );
 
@@ -283,7 +283,7 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
     function it_loads_product_data_with_category_filter()
     {
         $this->_elasticsearch->getProductData(
-            0, 0, array("categories" => 30, "is_parent" => 1)
+            0, 0, array("categories" => 30)
         )->willReturn(
             $this->_getSampleProductData()
         );

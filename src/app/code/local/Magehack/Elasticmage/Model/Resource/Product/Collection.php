@@ -115,9 +115,9 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
             $conditions['categories'] = $this->_productLimitationFilters['category_id'];
         }
 
-        if (isset($this->_productLimitationFilters['category_is_anchor'])) {
-            $conditions['is_parent'] = $this->_productLimitationFilters['category_is_anchor'];
-        }
+//        if (isset($this->_productLimitationFilters['category_is_anchor'])) {
+//            $conditions['is_parent'] = $this->_productLimitationFilters['category_is_anchor'];
+//        }
 
         $sort = array(
             array('cat_index_position' => 'asc')
@@ -392,9 +392,9 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
         return $this->_elasticsearch->getProductCount();
     }
 
-    private function _calculateFromParameter($from, $pageSize)
+    private function _calculateFromParameter($page, $pageSize)
     {
-        return (int) ($from * $pageSize);
+        return (int) (($page-1) * (int)$pageSize);
     }
 
 }
