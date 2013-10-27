@@ -5,4 +5,4 @@ Feature: Category browsing
 
   Scenario: Product data is displayed on category page
     When I am on "/furniture.html"
-    Then I should see "Product 2"
+    Then I should see "Akio Dresser"
