@@ -33,13 +33,18 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
         return array_map(function ($el) { return (int)$el['_id'];}, $response['hits']['hits'] );
     }
 
-    public function getProductData()
+    public function getProductData($from = null, $size = null)
     {
         $this->_query = array(
             'query' => array(
                 'match_all' => array()
             )
         );
+
+        if($from && $size){
+            $this->_query["from"] = (int) $from;
+            $this->_query["size"] = (int) $size;
+        }
 
         $response = $this->_sendSearchQuery();
 

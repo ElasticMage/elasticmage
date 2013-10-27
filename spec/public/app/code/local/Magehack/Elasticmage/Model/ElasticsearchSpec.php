@@ -84,48 +84,7 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
         $params['type']  = 'product';
         $params['body']  = $json;
 
-        $return = array (
-            'took' => 29,
-            'timed_out' => false,
-            '_shards' =>
-                array(
-                    'total' => 5,
-                    'successful' => 5,
-                    'failed' => 0,
-                ),
-            'hits' =>
-                array(
-                    'total' => 2,
-                    'max_score' => 1,
-                    'hits' =>
-                        array(
-                            0 =>
-                                array(
-                                    '_index' => 'magehack',
-                                    '_type' => 'product',
-                                    '_id' => '1',
-                                    '_score' => 1,
-                                    '_source' => array(
-                                        "entity_id" => "1",
-                                        "sku" => "a1a",
-                                        "name" => "Product 1",
-                                    ),
-                                ),
-                            1 =>
-                                array(
-                                    '_index' => 'magehack',
-                                    '_type' => 'product',
-                                    '_id' => '2',
-                                    '_score' => 1,
-                                    '_source' => array(
-                                        "entity_id" => "2",
-                                        "sku" => "a2a",
-                                        "name" => "Product 2",
-                                    ),
-                                ),
-                        ),
-                )
-        );
+        $return = $this->_getProductSampleData();
 
         $this->_connection->search($params)->willReturn($return);
 
@@ -168,4 +127,84 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
         $this->getProductCount()->shouldReturn(2);
     }
 
+    function it_accepts_limit_parameters_for_product_data_requests()
+    {
+        $json = array(
+            'query' => array(
+                'match_all' => array()
+            ),
+            'from' => 1,
+            'size' => 2
+        );
+
+        $params['index'] = 'magehack';
+        $params['type']  = 'product';
+        $params['body']  = $json;
+
+        $return = $this->_getProductSampleData();
+
+        $this->_connection->search($params)->willReturn($return);
+
+
+        $this->getProductData(1, 2)->shouldReturn(
+            array(
+                array(
+                    "entity_id" => "1",
+                    "sku" => "a1a",
+                    "name" => "Product 1",
+                ),
+                array(
+                    "entity_id" => "2",
+                    "sku" => "a2a",
+                    "name" => "Product 2",
+                )
+            )
+        );
+    }
+
+    private function _getProductSampleData()
+    {
+        return array (
+            'took' => 29,
+            'timed_out' => false,
+            '_shards' =>
+            array(
+                'total' => 5,
+                'successful' => 5,
+                'failed' => 0,
+            ),
+            'hits' =>
+            array(
+                'total' => 2,
+                'max_score' => 1,
+                'hits' =>
+                array(
+                    0 =>
+                    array(
+                        '_index' => 'magehack',
+                        '_type' => 'product',
+                        '_id' => '1',
+                        '_score' => 1,
+                        '_source' => array(
+                            "entity_id" => "1",
+                            "sku" => "a1a",
+                            "name" => "Product 1",
+                        ),
+                    ),
+                    1 =>
+                    array(
+                        '_index' => 'magehack',
+                        '_type' => 'product',
+                        '_id' => '2',
+                        '_score' => 1,
+                        '_source' => array(
+                            "entity_id" => "2",
+                            "sku" => "a2a",
+                            "name" => "Product 2",
+                        ),
+                    ),
+                ),
+            )
+        );
+    }
 }
