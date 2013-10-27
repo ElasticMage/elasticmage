@@ -13,6 +13,7 @@ curl -XPUT 'localhost:9200/magehack/product/1' -d "$(cat <<JSCFG
     "price": 100.000,
     "url_key": "product-1",
     "visibility": 4,
+    "is_recurring": 0,
     "created_at": "2013-10-28 11:00:00"
 }
 JSCFG
@@ -29,6 +30,7 @@ curl -XPUT 'localhost:9200/magehack/product/2' -d "$(cat <<JSCFG
     ],
     "description": "My second product",
     "price": 50.000,
+    "is_recurring": 0,
     "url_key": "product-2",
     "visibility": 4,
     "created_at": "2013-10-28 12:00:00"

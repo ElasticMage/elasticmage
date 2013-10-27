@@ -7,12 +7,12 @@ use Prophecy\Argument;
 
 class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectBehavior
 {
-    private $_connection;
+    private $_elasticsearch = null;
 
-    function let(\Elasticsearch\Client $connection)
+    function let(\Magehack_Elasticmage_Model_Elasticsearch $elasticsearch)
     {
-        $this->_connection = $connection;
-        $this->beConstructedWith(array('connection' => $connection));
+        $this->_elasticsearch = $elasticsearch;
+        $this->beConstructedWith(array('elasticsearch' => $elasticsearch));
     }
 
     function it_is_initializable()
@@ -85,11 +85,6 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
         $this->getLimitationFilters()->shouldBeArray();
     }
 
-    function it_should_addCategoryFilter_return_with_Magehack_Elasticmage_Model_Resource_Product_Collection(\Mage_Catalog_Model_Category $category)
-    {
-        $this->addCategoryFilter($category)->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
-    }
-
     function it_should_joinMinimalPrice_return_with_Magehack_Elasticmage_Model_Resource_Product_Collection()
     {
         $this->joinMinimalPrice()->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
@@ -157,7 +152,8 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
 
     function it_should_getAllIds_return_array()
     {
-        $this->getAllIds()->shouldBeArray();
+        $this->_elasticsearch->getAllIds()->willReturn(array(1, 2));
+        $this->getAllIds()->shouldReturn(array(1, 2));
     }
 
     function it_should_getProductCountSelect()
@@ -258,5 +254,36 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
     function it_should_addSearchFilter_return_Magehack_Elasticmage_Model_Resource_Product_Collection()
     {
         $this->setOrder('a')->shouldBeAnInstanceOf('Magehack_Elasticmage_Model_Resource_Product_Collection');
+    }
+
+    function it_loads_product_data()
+    {
+        $this->_elasticsearch->getProductData()->willReturn(
+            array(
+                array(
+                    "entity_id" => "1",
+                    "sku" => "a1a",
+                    "name" => "Product 1",
+                ),
+                array(
+                    "entity_id" => "2",
+                    "sku" => "a2a",
+                    "name" => "Product 2",
+                )
+            )
+        );
+        $this->load();
+
+
+        $items = $this->getItems();
+        $items->offsetGet(1)->getData()->offsetGet("entity_id")->shouldBe("1");
+        $items->offsetGet(1)->getData()->offsetGet("sku")->shouldBe("a1a");
+        $items->offsetGet(1)->getData()->offsetGet("name")->shouldBe("Product 1");
+    }
+
+    function it_should_return_with_the_number_of_all_products()
+    {
+        $this->_elasticsearch->getProductCount()->willReturn(2);
+        $this->getSize()->shouldReturn(2);
     }
 }

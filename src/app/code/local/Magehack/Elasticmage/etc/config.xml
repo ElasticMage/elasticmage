@@ -17,9 +17,19 @@
             </magehack_elasticmage>
         </helpers>
         <models>
+            <catalog_resource>
+                <rewrite>
+                    <!--<category_collection>Magehack_Elasticmage_Model_Resource_Category_Collection</category_collection>-->
+                    <product_collection>Magehack_Elasticmage_Model_Resource_Product_Collection</product_collection>
+                </rewrite>
+            </catalog_resource>
             <magehack_elasticmage>
                 <class>Magehack_Elasticmage_Model</class>
+                <resourceModel>magehack_elasticmage_resource</resourceModel>
             </magehack_elasticmage>
+            <magehack_elasticmage_resource>
+                <class>Magehack_Elasticmage_Model_Resource</class>
+            </magehack_elasticmage_resource>
         </models>
         <resources>
             <magehack_elasticmage_setup>
