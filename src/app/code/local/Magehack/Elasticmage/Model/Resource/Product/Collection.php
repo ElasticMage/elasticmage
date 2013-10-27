@@ -101,7 +101,7 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
             return $this;
         }
 
-        $conditions['store_id'] = $this->_productLimitationFilters['store_id'];
+        //$conditions['store_id'] = $this->_productLimitationFilters['store_id'];
 
         //TODO: Implement IN search
 /*

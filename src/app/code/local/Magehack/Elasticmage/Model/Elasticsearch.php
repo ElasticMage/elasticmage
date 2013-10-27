@@ -82,7 +82,7 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
 
     protected function _applyPagination()
     {
-        if (isset())
+        return $this;
     }
 
     protected function _addFilterQuery()
