@@ -7,10 +7,15 @@
 from pymysqlreplication import BinLogStreamReader
 from pymysqlreplication.row_event import *
 
-mysql_settings = {'host': '127.0.0.1', 'port': 3306, 'user': 'root', 'passwd': 'root'}
+mysql_settings = {'host': '127.0.0.1', 'port': 3306, 'user': 'root', 'passwd': 'root', 'db':'elasticmage'}
 
 import json
 import cherrypy
+
+import pymysql
+
+from MageMapper import MageMapper
+from MageAttributes import MageAttributes
 
 cherrypy.engine.timeout_monitor.unsubscribe()
 
@@ -28,9 +33,9 @@ def default(obj):
     return millis
 
 class Streamer(object):
-    def __init__(self):
-        self.stream = BinLogStreamReader(connection_settings = mysql_settings,
-                                         only_events = [DeleteRowsEvent, WriteRowsEvent, UpdateRowsEvent], blocking = True, resume_stream = True)
+    def __init__(self, mapper):
+        self.mapper = mapper
+        self.stream = BinLogStreamReader(connection_settings = mysql_settings, only_events = [DeleteRowsEvent, WriteRowsEvent, UpdateRowsEvent], blocking = True, resume_stream = True)
 
 
     def index(self):
@@ -38,24 +43,30 @@ class Streamer(object):
         def content():
             for binlogevent in self.stream:
                 for row in binlogevent.rows:
+                    data = None
                     if isinstance(binlogevent, DeleteRowsEvent):
-                        yield json.dumps({
+                        data = {
                           "action": "delete",
                           "table": binlogevent.table,
                           "doc": row["values"]
-			}, default=default) + "\n"
+						}
                     elif isinstance(binlogevent, UpdateRowsEvent):
-                        yield json.dumps({
+                        data = {
                           "action": "update",
                           "table": binlogevent.table,
                           "doc": row["after_values"]
-			}, default=default) + "\n"
+						}
                     elif isinstance(binlogevent, WriteRowsEvent):
-                        yield json.dumps({
+                        data = {
                           "action": "insert",
                           "table": binlogevent.table,
                           "doc": row["values"]
-			}, default=default) + "\n"
+						}
+                    if data is not None:
+                        data = self.mapper.map(data)
+                    if data is not None:
+                        yield json.dumps(data, default=default) + "\n"
+
         return content()
 
     index.exposed = True
@@ -63,4 +74,6 @@ class Streamer(object):
 
 
 if __name__ == "__main__":
-	cherrypy.quickstart(Streamer())
+	connection = pymysql.connect(**mysql_settings)
+	cherrypy.quickstart(Streamer(MageMapper(MageAttributes(connection))))
+

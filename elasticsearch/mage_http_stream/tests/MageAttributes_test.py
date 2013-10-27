@@ -8,12 +8,14 @@ import fudge
 
 class MageAttributes_(unittest.TestCase):
 	def setUp(self):
+		self.cur = fudge.Fake('pymysql.cursor')
+		self.cur.provides('close')
 		conn = fudge.Fake('pymysql')
-		conn.provides('cursor').returns_fake()
+		conn.provides('cursor').returns(self.cur)
 		self.attr = MageAttributes(conn)
 
 	def test_if_it_gets_label_from_eav_attribute_table(self):
-		cur = (self.attr.cur.provides('execute')
+		cur = (self.cur.provides('execute')
 			.returns_fake()
 			.provides('fetchone')
 			.returns(('my_attribute',)))
@@ -21,7 +23,7 @@ class MageAttributes_(unittest.TestCase):
 
 	def test_if_it_caches_returned_value(self):
 		cur = (
-			self.attr.cur.provides('execute')
+			self.cur.provides('execute')
 				.returns_fake()
 				.provides('fetchone')
 				.returns(('my_attribute',))
