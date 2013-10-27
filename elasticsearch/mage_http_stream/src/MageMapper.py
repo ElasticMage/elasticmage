@@ -6,6 +6,9 @@ class MageMapper(object):
 		self.attributes = attributes
 
 	def map(self, data):
+		if not data["table"].startswith("catalog_product_entity"):
+			return None
+
 		try:
 			data["id"] = data["doc"]["entity_id"]
 		except:
@@ -17,7 +20,7 @@ class MageMapper(object):
 		return data
 
 	def __map_eav_child_table(self, data):
-		label = self.attributes.getLabel(data["doc"]["entity_type_id"], data["doc"]["attribute_id"])
+		label = self.attributes.getLabel(data["doc"]["attribute_id"])
 		data["table"] = "catalog_product_entity"
 		data["action"] = "update"
 		doc = {}
