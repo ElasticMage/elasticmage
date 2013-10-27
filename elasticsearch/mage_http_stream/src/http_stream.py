@@ -26,11 +26,15 @@ def default(obj):
     if isinstance(obj, datetime.datetime):
         if obj.utcoffset() is not None:
             obj = obj - obj.utcoffset()
-    millis = int(
-        calendar.timegm(obj.timetuple()) * 1000 +
-        obj.microsecond / 1000
-    )
-    return millis
+        millis = int(
+            calendar.timegm(obj.timetuple()) * 1000 +
+            obj.microsecond / 1000
+        )
+        return millis
+    if isinstance(obj, decimal.Decimal):
+        return str(obj)
+
+
 
 class Streamer(object):
     def __init__(self, mapper):
@@ -49,19 +53,19 @@ class Streamer(object):
                           "action": "delete",
                           "table": binlogevent.table,
                           "doc": row["values"]
-						}
+                        }
                     elif isinstance(binlogevent, UpdateRowsEvent):
                         data = {
                           "action": "update",
                           "table": binlogevent.table,
                           "doc": row["after_values"]
-						}
+                        }
                     elif isinstance(binlogevent, WriteRowsEvent):
                         data = {
                           "action": "insert",
                           "table": binlogevent.table,
                           "doc": row["values"]
-						}
+                        }
                     if data is not None:
                         data = self.mapper.map(data)
                     if data is not None:
@@ -74,6 +78,6 @@ class Streamer(object):
 
 
 if __name__ == "__main__":
-	connection = pymysql.connect(**mysql_settings)
-	cherrypy.quickstart(Streamer(MageMapper(MageAttributes(connection))))
+    connection = pymysql.connect(**mysql_settings)
+    cherrypy.quickstart(Streamer(MageMapper(MageAttributes(connection))))
 
