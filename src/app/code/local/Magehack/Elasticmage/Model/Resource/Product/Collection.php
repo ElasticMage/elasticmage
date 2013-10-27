@@ -374,8 +374,12 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
 
     public function _loadEntities($printQuery = false, $logQuery = false)
     {
-        //$this->_elasticsearch->setLimitPage($this->getCurPage(), $this->_pageSize);
-        $data = $this->_elasticsearch->getProductData();
+        $data = $this->_elasticsearch->getProductData(
+            $this->_calculateFromParameter(
+                $this->_curPage, $this->_pageSize
+            ),
+            (int) $this->_pageSize
+        );
 
         foreach ($data as $v) {
             $object = $this->getNewEmptyItem()
@@ -394,4 +398,10 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
     {
         return $this->_elasticsearch->getProductCount();
     }
+
+    private function _calculateFromParameter($from, $pageSize)
+    {
+        return (int) ($from * $pageSize);
+    }
+
 }

@@ -258,32 +258,55 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
 
     function it_loads_product_data()
     {
-        $this->_elasticsearch->getProductData()->willReturn(
-            array(
-                array(
-                    "entity_id" => "1",
-                    "sku" => "a1a",
-                    "name" => "Product 1",
-                ),
-                array(
-                    "entity_id" => "2",
-                    "sku" => "a2a",
-                    "name" => "Product 2",
-                )
-            )
+        $this->_elasticsearch->getProductData(0, 0)->willReturn(
+            $this->_getSampleProductData()
         );
         $this->load();
 
+        $this->_validateLoadedSampleProducts();
+    }
 
-        $items = $this->getItems();
-        $items->offsetGet(1)->getData()->offsetGet("entity_id")->shouldBe("1");
-        $items->offsetGet(1)->getData()->offsetGet("sku")->shouldBe("a1a");
-        $items->offsetGet(1)->getData()->offsetGet("name")->shouldBe("Product 1");
+    function it_loads_product_data_with_limits()
+    {
+        $this->_elasticsearch->getProductData(1*2, 2)->willReturn(
+            $this->_getSampleProductData()
+        );
+
+        $this->setCurPage(1);
+        $this->setPageSize(2);
+
+        $this->load();
+
+        $this->_validateLoadedSampleProducts();
     }
 
     function it_should_return_with_the_number_of_all_products()
     {
         $this->_elasticsearch->getProductCount()->willReturn(2);
         $this->getSize()->shouldReturn(2);
+    }
+
+    private function _getSampleProductData()
+    {
+        return array(
+            array(
+                "entity_id" => "1",
+                "sku" => "a1a",
+                "name" => "Product 1",
+            ),
+            array(
+                "entity_id" => "2",
+                "sku" => "a2a",
+                "name" => "Product 2",
+            )
+        );
+    }
+
+    private function _validateLoadedSampleProducts()
+    {
+        $items = $this->getItems();
+        $items->offsetGet(1)->getData()->offsetGet("entity_id")->shouldBe("1");
+        $items->offsetGet(1)->getData()->offsetGet("sku")->shouldBe("a1a");
+        $items->offsetGet(1)->getData()->offsetGet("name")->shouldBe("Product 1");
     }
 }
