@@ -89,9 +89,37 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
         return $this;
     }
 
+    /**
+     * Work out if given filters need to be built as logical OR query.
+     * If key value in filter is array assume OR
+     * If more than one filter assume OR
+     *
+     * @param $filters array
+     * @return bool
+     */
+    protected function _detectLogicalOrFilter($filters){
+        $or_query = (count($filters) > 1) ? true : false;
+
+        if(!$or_query){
+            foreach($filters as $k => $v){
+                if(is_array($v)){
+                    $or_query = true;
+                    break;
+                }
+            }
+        }
+        return $or_query;
+    }
+
     protected function _addFilterQuery()
     {
-        $this->_query['query']['filtered']['filter']['term'] = $this->getFilters();
+        $filters = $this->getFilters();
+
+        if($this->_detectLogicalOrFilter($filters)){
+            $this->_query['query']['filtered']['filter'] = $this->buildLogicalOrFilter($filters);
+        }else{
+            $this->_query['query']['filtered']['filter']['term'] = $filters;
+        }
 
         return $this;
     }
@@ -119,5 +147,27 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
         $params['body']  = $this->_query;
 
         return $this->_client->count($params);
+    }
+
+    public function buildLogicalOrFilter($filters){
+        $res = array("or" => array());
+        foreach($filters as $k => $val){
+            if (is_array($val)){
+               foreach($val as $v){
+                   $res['or'][] = array(
+                       "term" => array(
+                           $k => $v
+                       )
+                   );
+               }
+            }else{
+                $res['or'][] = array(
+                    "term" => array(
+                        $k => $val
+                    )
+                );
+            }
+        }
+        return $res;
     }
 }
