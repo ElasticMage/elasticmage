@@ -300,7 +300,7 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
 
     function it_should_return_with_the_number_of_all_products()
     {
-        $this->_elasticsearch->getProductCount()->willReturn(2);
+        $this->_elasticsearch->getProductCount(array())->willReturn(2);
         $this->getSize()->shouldReturn(2);
     }
 
@@ -327,4 +327,21 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
         $items->offsetGet(1)->getData()->offsetGet("sku")->shouldBe("a1a");
         $items->offsetGet(1)->getData()->offsetGet("name")->shouldBe("Product 1");
     }
+
+    public function it_should_return_the_number_of_products_with_filters()
+    {
+        $params = array(
+            'categories' => 10,
+        );
+
+        $this->_elasticsearch->getProductCount($params)->willReturn(2);
+
+        $category = new \Mage_Catalog_Model_Category();
+        $category->setData(array('entity_id'=>10, 'is_anchor'=>false));
+
+        $this->addCategoryFilter($category);
+
+        $this->getSize()->shouldReturn(2);
+    }
+
 }

@@ -389,7 +389,7 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
 
     public function getSize()
     {
-        return $this->_elasticsearch->getProductCount();
+        return $this->_elasticsearch->getProductCount($this->conditions);
     }
 
     private function _calculateFromParameter($page, $pageSize)

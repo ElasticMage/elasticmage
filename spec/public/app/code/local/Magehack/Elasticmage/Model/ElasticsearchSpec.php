@@ -96,7 +96,9 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
 
     function it_requests_elastic_search_for_count_of_all_items()
     {
-        $json = array('match_all'=>array());
+        $json = array(
+            'match_all' => array()
+        );
 
         $params['index'] = 'magehack';
         $params['type']  = 'product';
@@ -314,4 +316,39 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
             $this->_getSampleProductResultData()
         );
     }
+
+    function it_requests_elasticsearch_for_count_of_items_with_filters()
+    {
+        $json = array(
+            'filtered' => array(
+                'query' => array( "match_all" => array() ),
+                'filter' => array(
+                    "term" => array( "categories" => 10 )
+                )
+            )
+        );
+
+        $params['index'] = 'magehack';
+        $params['type']  = 'product';
+        $params['body']  = $json;
+
+
+        $return = array(
+            'count' => 2,
+            '_shards' => array(
+                'total' => 10,
+                'successful' => 10,
+                'failed' => 0
+            )
+        );
+
+        $this->_connection->count($params)->willReturn($return);
+
+        $filters = array(
+            'categories' => 10,
+        );
+
+        $this->getProductCount($filters)->shouldReturn(2);
+    }
+
 }

@@ -60,9 +60,15 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
         return $returnArray;
     }
 
-    public function getProductCount()
+    public function getProductCount($filters = array())
     {
-        $this->_query = array('match_all'=>array());
+        $this->_query = array(
+            'match_all' => array()
+        );
+
+        if ($filters) {
+            $this->setFilters($filters);
+        }
 
         $response = $this->_sendCountQuery();
 
@@ -78,6 +84,10 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
                 $this->_query['query']['filtered']['query'] = $this->_query['query'];
                 unset($this->_query['query']['match_all']);
                 $this->_addFilterQuery();
+            }elseif (!empty($filters) && isset($this->_query['match_all'])){
+                $this->_query['filtered']['query']['match_all'] = $this->_query['match_all'];
+                unset($this->_query['match_all']);
+                $this->_addFilters();
             }
         }
 
@@ -140,6 +150,8 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
 
     protected function _sendCountQuery()
     {
+        $this->_applyFilters();
+
         $this->setFilters(null);
 
         $params['index'] = 'magehack';
@@ -169,5 +181,18 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
             }
         }
         return $res;
+    }
+
+    protected function _addFilters()
+    {
+        $filters = $this->getFilters();
+
+        if($this->_detectLogicalOrFilter($filters)){
+            $this->_query['filtered']['filter'] = $this->buildLogicalOrFilter($filters);
+        }else{
+            $this->_query['filtered']['filter']['term'] = $filters;
+        }
+
+        return $this;
     }
 }
