@@ -351,4 +351,29 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
         $this->getProductCount($filters)->shouldReturn(2);
     }
 
+    function it_accepts_limit_parameters_for_product_data_requests_with_falsy_from_size()
+    {
+        // Bug with first page loading default 10 items not specified amount,
+        // because we pass 0 for 'from' and code was using logical AND not OR on Size / From data.
+        $json = array(
+            'query' => array(
+                'match_all' => array()
+            ),
+            'from' => 0,
+            'size' => 2
+        );
+
+        $params['index'] = 'magehack';
+        $params['type']  = 'product';
+        $params['body']  = $json;
+
+        $return = $this->_getProductSampleData();
+
+        $this->_connection->search($params)->willReturn($return);
+
+
+        $this->getProductData(0, 2)->shouldReturn(
+            $this->_getSampleProductResultData()
+        );
+    }
 }

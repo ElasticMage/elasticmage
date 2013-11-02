@@ -41,7 +41,7 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
             )
         );
 
-        if($from && $size){
+        if($from || $size){
             $this->_query["from"] = (int) $from;
             $this->_query["size"] = (int) $size;
         }
