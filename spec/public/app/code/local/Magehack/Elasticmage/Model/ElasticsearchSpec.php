@@ -376,4 +376,44 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
             $this->_getSampleProductResultData()
         );
     }
+
+    function it_accepts_sort_parameters_for_product_data_requests()
+    {
+        $json = array(
+            'query' => array(
+                'filtered' => array(
+                    'query' => array( "match_all" => array() ),
+                    'filter' => array(
+                        "term" => array( "categories" => 10 )
+                    )
+                )
+            ),
+            'sort' => array(
+                array(
+                    "category_pos.10" => "asc"
+                )
+            )
+        );
+        $params['index'] = 'magehack';
+        $params['type']  = 'product';
+        $params['body']  = $json;
+
+        $return = $this->_getProductSampleData();
+
+        $this->_connection->search($params)->willReturn($return);
+
+        $filters = array(
+            'categories' => 10,
+        );
+        $sorts = array(
+            array(
+                "category_pos.10" => "asc"
+            )
+        );
+
+
+        $this->getProductData(null, null, $filters, $sorts)->shouldReturn(
+            $this->_getSampleProductResultData()
+        );
+    }
 }

@@ -33,7 +33,7 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
         return array_map(function ($el) { return (int)$el['_id'];}, $response['hits']['hits'] );
     }
 
-    public function getProductData($from = null, $size = null, $filters = array())
+    public function getProductData($from = null, $size = null, $filters = array(), $sorts = array())
     {
         $this->_query = array(
             'query' => array(
@@ -46,8 +46,14 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
             $this->_query["size"] = (int) $size;
         }
 
-        if ($filters) {
+        if (count($filters)) {
             $this->setFilters($filters);
+        }
+
+        if(count($sorts)){
+            foreach($sorts as $sort){
+                $this->_query["sort"][] = $sort;
+            }
         }
 
         $response = $this->_sendSearchQuery();

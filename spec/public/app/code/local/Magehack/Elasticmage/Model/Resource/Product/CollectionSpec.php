@@ -258,7 +258,7 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
 
     function it_loads_product_data()
     {
-        $this->_elasticsearch->getProductData(0, 0, array())->willReturn(
+        $this->_elasticsearch->getProductData(0, 0, array(), array())->willReturn(
             $this->_getSampleProductData()
         );
         $this->load();
@@ -268,7 +268,7 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
 
     function it_loads_product_data_with_limits()
     {
-        $this->_elasticsearch->getProductData(0, 2, array())->willReturn(
+        $this->_elasticsearch->getProductData(0, 2, array(), array())->willReturn(
             $this->_getSampleProductData()
         );
 
@@ -283,7 +283,7 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
     function it_loads_product_data_with_category_filter()
     {
         $this->_elasticsearch->getProductData(
-            0, 0, array("categories" => 30)
+            0, 0, array("categories" => 30), array()
         )->willReturn(
             $this->_getSampleProductData()
         );
@@ -342,6 +342,33 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
         $this->addCategoryFilter($category);
 
         $this->getSize()->shouldReturn(2);
+    }
+
+    public function it_sorts_products_by_category_position()
+    {
+        $sorts = array(
+            array(
+                "category_pos.10" => "asc"
+            )
+        );
+        $filters = array(
+            'categories' => 10,
+        );
+
+        $this->_elasticsearch->getProductData(0, 0, $filters, $sorts)->willReturn(
+            $this->_getSampleProductData()
+        );
+
+        $category = new \Mage_Catalog_Model_Category();
+        $category->setData(array('entity_id'=>10, 'is_anchor'=>false));
+
+        $this->addCategoryFilter($category);
+
+        $this->setOrder('position', 'asc');
+
+        $this->load();
+
+        $this->_validateLoadedSampleProducts();
     }
 
 }
