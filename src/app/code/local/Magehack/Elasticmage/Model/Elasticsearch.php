@@ -104,8 +104,8 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
     {
         $filters = $this->getFilters();
 
-        if($this->_detectLogicalOrFilter($filters)){
-            $this->_query['query']['filtered']['filter'] = $this->buildLogicalOrFilter($filters);
+        if($this->_detectLogicFilters($filters)){
+            $this->_query['query']['filtered']['filter'] = $this->buildLogicFilters($filters);
         }else{
             $this->_query['query']['filtered']['filter']['term'] = $filters;
         }
@@ -161,38 +161,48 @@ class Magehack_Elasticmage_Model_Elasticsearch extends Varien_Object
         return $res;
     }
 
-    /**
-     * Work out if given filters need to be built as logical OR query.
-     * If key value in filter is array assume OR
-     * If more than one filter assume OR
-     *
-     * @param $filters array
-     * @return bool
-     */
-    protected function _detectLogicalOrFilter($filters){
-        $or_query = (count($filters) > 1) ? true : false;
-
-        if(!$or_query){
-            foreach($filters as $k => $v){
-                if(is_array($v)){
-                    $or_query = true;
-                    break;
-                }
-            }
-        }
-        return $or_query;
-    }
-
     protected function _addFilters()
     {
         $filters = $this->getFilters();
 
-        if($this->_detectLogicalOrFilter($filters)){
-            $this->_query['filtered']['filter'] = $this->buildLogicalOrFilter($filters);
+        if($this->_detectLogicFilters($filters)){
+            $this->_query['filtered']['filter'] = $this->buildLogicFilters($filters);
         }else{
             $this->_query['filtered']['filter']['term'] = $filters;
         }
 
         return $this;
+    }
+
+    protected function _detectLogicFilters($filters)
+    {
+        $logic_query = (count($filters) > 1) ? true : false;
+
+        if(!$logic_query){
+            foreach($filters as $k => $v){
+                if(is_array($v)){
+                    $logic_query = true;
+                    break;
+                }
+            }
+        }
+        return $logic_query;
+    }
+
+    public function buildLogicFilters($filters)
+    {
+        if(count(array_keys($filters)) > 1){
+            $ret = array("and" => array());
+            foreach($filters as $attr => $filter){
+                if(is_array($filter)){
+                    $ret["and"][] = $this->buildLogicalOrFilter(array($attr => $filter));
+                }else{
+                    $ret["and"][]['term'] = array($attr => $filter);
+                }
+            }
+        }else{
+            $ret = $this->buildLogicalOrFilter($filters);
+        }
+        return $ret;
     }
 }

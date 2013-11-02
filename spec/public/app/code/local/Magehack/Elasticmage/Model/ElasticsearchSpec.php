@@ -275,7 +275,7 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
         );
     }
 
-    function it_applies_multiple_query_filters_for_product_loading()
+    function it_applies_logical_or_query_filter_for_product_loading()
     {
         $json = array(
             'query' => array(
@@ -413,6 +413,67 @@ class Magehack_Elasticmage_Model_ElasticsearchSpec extends ObjectBehavior
 
 
         $this->getProductData(null, null, $filters, $sorts)->shouldReturn(
+            $this->_getSampleProductResultData()
+        );
+    }
+
+    function it_applies_multiple_query_filters_for_product_loading()
+    {
+        $json = array(
+            'query' => array(
+                'filtered' => array(
+                    'query' => array( "match_all" => array() ),
+                    'filter' => array(
+                        "and" => array(
+                            array(
+                               "or" => array(
+                                   array(
+                                       "term" => array(
+                                           "visibility" => 2
+                                       )
+                                   ),
+                                   array(
+                                       "term" => array(
+                                           "visibility" => 4
+                                       )
+                                   )
+                               )
+                            ),
+                            array(
+                                "or" => array(
+                                    array(
+                                        "term" => array(
+                                            "categories" => 1
+                                        )
+                                    ),
+                                    array(
+                                        "term" => array(
+                                            "categories" => 3
+                                        )
+                                    )
+                                )
+                            ),
+                        )
+                    )
+                )
+            )
+        );
+
+        $params['index'] = 'magehack';
+        $params['type']  = 'product';
+        $params['body']  = $json;
+
+        $return = $this->_getProductSampleData();
+
+        $this->_connection->search($params)->willReturn($return);
+
+
+        $filters = array(
+            'visibility' => array(2, 4),
+            'categories' => array(1, 3),
+        );
+
+        $this->getProductData(0, 0, $filters)->shouldReturn(
             $this->_getSampleProductResultData()
         );
     }
