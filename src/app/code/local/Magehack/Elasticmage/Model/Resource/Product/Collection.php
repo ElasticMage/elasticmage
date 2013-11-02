@@ -342,6 +342,10 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
                     $key => $dir
                 );
             }
+        }else{
+            $this->sorts[] = array(
+                $attribute => $dir
+            );
         }
         return $this;
     }

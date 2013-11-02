@@ -371,4 +371,23 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
         $this->_validateLoadedSampleProducts();
     }
 
+    public function it_sorts_products_by_attribute()
+    {
+        $sorts = array(
+            array(
+                "price" => "asc"
+            )
+        );
+
+        $this->_elasticsearch->getProductData(0, 0, array(), $sorts)->willReturn(
+            $this->_getSampleProductData()
+        );
+
+        $this->setOrder('price', 'asc');
+
+        $this->load();
+
+        $this->_validateLoadedSampleProducts();
+    }
+
 }
