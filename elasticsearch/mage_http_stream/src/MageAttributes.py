@@ -84,7 +84,7 @@ class MageAttributes(object):
                 return None
 
     def __get_attribute_types(self, attr_id):
-        query = "SELECT `backend_type`, `frontend_type` FROM `eav_attribute` WHERE `attribute_id` = {0}".format(attr_id)
+        query = "SELECT `backend_type`, `frontend_input` FROM `eav_attribute` WHERE `attribute_id` = {0}".format(attr_id)
         return self.__retrieve_value(query, attr_id)
 
     def getMappingType(self, attr_id):
@@ -113,16 +113,16 @@ class MageAttributes(object):
         return self.__retrieve_value(query, attr_id)
 
     def isSearchable(self, attr_id):
-        return True if self.__get_attribute_multi(attr_id)[0] == '1' else False
+        return self.__get_attribute_multi(attr_id)[0]
 
     def isFilterable(self, attr_id):
-        return True if self.__get_attribute_multi(attr_id)[1] == '1' else False
+        return self.__get_attribute_multi(attr_id)[1]
 
     def isFilterableInSearch(self, attr_id):
-        return True if self.__get_attribute_multi(attr_id)[2] == '1' else False
+        return self.__get_attribute_multi(attr_id)[2]
 
     def isSortable(self, attr_id):
-        return True if self.__get_attribute_multi(attr_id)[3] == '1' else False
+        return self.__get_attribute_multi(attr_id)[3]
 
     def isMultiField(self, attr_id):
         if (self.isFilterable(attr_id) or

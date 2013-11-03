@@ -44,9 +44,9 @@ class MageAttributes_(unittest.TestCase):
 
     def test_if_it_finds_multi_field_applicable_attributes(self):
         self.cur.provides('execute').returns_fake()
-        (self.cur.provides('fetchone').returns(('1', '1', '1', '1'))
-            .next_call().returns(('1','0','0','0'))
-            .next_call().returns(('0','1','0','0')))
+        (self.cur.provides('fetchone').returns((1, 1, 1, 1))
+            .next_call().returns((1,0,0,0))
+            .next_call().returns((0,1,0,0)))
 
         eq_(self.attr.isMultiField('42'), True)
         eq_(self.attr.isMultiField('43'), False)
