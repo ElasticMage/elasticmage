@@ -15,6 +15,7 @@ import pymysql
 
 from MageMapper import MageMapper
 from MageAttributes import MageAttributes
+from MageIndexMapper import MageIndexMapper
 
 import requests
 
@@ -78,6 +79,18 @@ class Streamer(object):
 
 if __name__ == "__main__":
     connection = pymysql.connect(**mysql_settings)
+    attributes = MageAttributes(connection)
+
+    # Build index mapping if it doesn't exist
+    r = requests.head("http://localhost:9200/magehack1")
+    if r.status_code != 200:
+        print "Building index mapping...\n"
+        mapping = MageIndexMapper(attributes).buildProductIndexMap()
+        r = requests.post("http://localhost:9200/magehack1", json.dumps(mapping, default=default))
+        if r.status_code != 200:
+            print "Failed to send mapping to elasticsearch:\n\n{0}".format(mapping)
+        print "Completed!\n\n"
+
     for event in Streamer(MageMapper(MageAttributes(connection))).index():
 #        if event["action"] == "insert":
 #            requests.put("http://localhost:9200/magehack/product/"+str(event["id"]), json.dumps(event["doc"], default=default))
