@@ -31,7 +31,9 @@ class MageAttributes_(unittest.TestCase):
         eq_(self.attr.getMappingType('42'), 'string')
 
     def test_if_it_gets_list_of_all_attributes_for_entity(self):
-        pass
+        self.cur.provides('execute').returns_fake()
+        self.cur.provides('fetchall').returns(((1,), (2,), (3,)))
+        eq_(self.attr.getAttributesForEntity(10), [1,2,3])
 
     def test_if_it_removes_item_from_cache(self):
         self.cur.provides('execute').returns_fake()

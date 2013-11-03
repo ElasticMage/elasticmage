@@ -131,3 +131,8 @@ class MageAttributes(object):
             return True
         return False
 
+    def getAttributesForEntity(self, entity_type_id):
+        query = "SELECT `attribute_id` FROM `eav_attribute` WHERE `entity_type_id` = {0}".format(entity_type_id)
+        data = self.__retrieve_value(query, None, True)
+        return [item[0] for item in data]
+
