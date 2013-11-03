@@ -37,7 +37,7 @@ class MageAttributes_(unittest.TestCase):
         self.cur.provides('execute').returns_fake()
         self.cur.provides('fetchone').returns(('my_attribute',)).times_called(2)
         eq_(self.attr.getLabel('42'), 'my_attribute')
-        self.attr.removeCacheByAttr('42')
+        self.attr.removeCacheByTagId('42')
         eq_(self.attr.getLabel('42'), 'my_attribute')
 
     def test_if_it_finds_multi_field_applicable_attributes(self):

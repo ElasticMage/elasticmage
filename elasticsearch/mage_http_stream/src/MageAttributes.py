@@ -60,20 +60,24 @@ class MageAttributes(object):
         query = "SELECT `attribute_code` FROM `eav_attribute` WHERE `attribute_id` = {0}".format(attr_id)
         return self.__retrieve_value(query, attr_id)[0]
 
-    def __retrieve_value(self, query, attr_id):
+    def __retrieve_value(self, query, cache_tag_id = None, fetchall = None):
         key = hashlib.md5(query).hexdigest()
         try:
-            return self.cache[attr_id][key]
+            return self.cache[cache_tag_id][key]
         except KeyError:
-            if not attr_id in self.cache:
-                self.cache[attr_id] = {}
+            if cache_tag_id and not cache_tag_id in self.cache:
+                self.cache[cache_tag_id] = {}
 
             try:
                 cur = self.conn.cursor()
                 cur.execute(query)
-                data = cur.fetchone()
+                if fetchall:
+                    data = cur.fetchall()
+                else:
+                    data = cur.fetchone()
                 cur.close()
-                self.cache[attr_id][key] = data
+                if cache_tag_id:
+                    self.cache[cache_tag_id][key] = data
                 return data
             except Exception as e:
                 print "Unable to run query: '{0}' got:\n\n{1}".format(query, e)
@@ -98,12 +102,12 @@ class MageAttributes(object):
 
         return elastic_type
 
-    def removeCacheByAttr(self, attr_id):
+    def removeCacheByTagId(self, cache_tag_id):
         try:
-            del self.cache[attr_id]
+            del self.cache[cache_tag_id]
         except:
             pass
-    
+
     def __get_attribute_multi(self, attr_id):
         query = "SELECT `is_searchable`, `is_filterable`, `is_filterable_in_search`, `used_for_sort_by` FROM `catalog_eav_attribute` WHERE `attribute_id` = {0}".format(attr_id)
         return self.__retrieve_value(query, attr_id)
