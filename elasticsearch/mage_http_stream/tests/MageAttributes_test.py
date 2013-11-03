@@ -24,3 +24,19 @@ class MageAttributes_(unittest.TestCase):
         self.cur.provides('fetchone').returns(('my_attribute',)).next_call().returns(None)
         eq_(self.attr.getLabel('42'), 'my_attribute')
         eq_(self.attr.getLabel('42'), 'my_attribute')
+
+    def test_if_it_gets_elasticsearch_field_mapping_type_for_attribute(self):
+        self.cur.provides('execute').returns_fake()
+        self.cur.provides('fetchone').returns(('text', 'textarea'))
+        eq_(self.attr.getMappingType('42'), 'string')
+
+    def test_if_it_gets_list_of_all_attributes_for_entity(self):
+        pass
+
+    def test_if_it_removes_item_from_cache(self):
+        self.cur.provides('execute').returns_fake()
+        self.cur.provides('fetchone').returns(('my_attribute',)).times_called(2)
+        eq_(self.attr.getLabel('42'), 'my_attribute')
+        self.attr.removeCacheByAttr('42')
+        eq_(self.attr.getLabel('42'), 'my_attribute')
+
