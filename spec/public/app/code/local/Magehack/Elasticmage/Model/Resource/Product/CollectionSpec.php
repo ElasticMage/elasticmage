@@ -328,7 +328,7 @@ class Magehack_Elasticmage_Model_Resource_Product_CollectionSpec extends ObjectB
         $items->offsetGet(1)->getData()->offsetGet("name")->shouldBe("Product 1");
     }
 
-    public function it_should_return_the_number_of_products_with_filters()
+    public function it_returns_the_number_of_products_with_filters()
     {
         $params = array(
             'categories' => 10,
