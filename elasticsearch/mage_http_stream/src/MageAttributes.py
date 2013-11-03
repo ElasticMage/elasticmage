@@ -104,3 +104,26 @@ class MageAttributes(object):
         except:
             pass
     
+    def __get_attribute_multi(self, attr_id):
+        query = "SELECT `is_searchable`, `is_filterable`, `is_filterable_in_search`, `used_for_sort_by` FROM `catalog_eav_attribute` WHERE `attribute_id` = {0}".format(attr_id)
+        return self.__retrieve_value(query, attr_id)
+
+    def isSearchable(self, attr_id):
+        return True if self.__get_attribute_multi(attr_id)[0] == '1' else False
+
+    def isFilterable(self, attr_id):
+        return True if self.__get_attribute_multi(attr_id)[1] == '1' else False
+
+    def isFilterableInSearch(self, attr_id):
+        return True if self.__get_attribute_multi(attr_id)[2] == '1' else False
+
+    def isSortable(self, attr_id):
+        return True if self.__get_attribute_multi(attr_id)[3] == '1' else False
+
+    def isMultiField(self, attr_id):
+        if (self.isFilterable(attr_id) or
+            self.isSortable(attr_id) or
+            self.isFilterableInSearch(attr_id)):
+            return True
+        return False
+
