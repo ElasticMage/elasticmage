@@ -1,3 +1,3 @@
 # Settings
 
-Please use envinronemnt provided in https://bitbucket.org/svalaskevicius/elasticmage-environment.
+Development environment is provided in https://bitbucket.org/svalaskevicius/elasticmage-environment.
