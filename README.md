@@ -1,3 +1,3 @@
 # Settings
 
-Development environment is provided in https://bitbucket.org/svalaskevicius/elasticmage-environment.
+Development environment and setup instructions are provided in https://github.com/ElasticMage/elasticmage-environment.
