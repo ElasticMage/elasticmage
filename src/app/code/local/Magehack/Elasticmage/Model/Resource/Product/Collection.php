@@ -333,18 +333,9 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
 
     public function setOrder($attribute, $dir = 'desc')
     {
-        if($attribute == 'position'){
-            if(isset($this->conditions['categories'])){
-                // Currently assuming only 1 category filter
-                $key = "category_pos.".$this->conditions['categories'];
-                $this->sorts[] = array(
-                    $key => $dir
-                );
-            }
-        }else{
-            $this->sorts[] = array(
-                $attribute => $dir
-            );
+        $sorts = $this->_buildSortByAttribute($attribute, $dir);
+        if($sorts){
+            $this->sorts = $sorts;
         }
         return $this;
     }
@@ -409,6 +400,26 @@ class Magehack_Elasticmage_Model_Resource_Product_Collection extends Mage_Catalo
     private function _calculateFromParameter($page, $pageSize)
     {
         return (int) (($page-1) * (int)$pageSize);
+    }
+
+    private function _buildSortByAttribute($attribute, $dir = 'desc')
+    {
+        $ret = array();
+        if($attribute == 'position'){
+            if(isset($this->conditions['categories'])){
+                // Currently assuming only 1 category filter
+                $key = "category_pos.".$this->conditions['categories'];
+                $ret[] = array(
+                    $key => $dir
+                );
+            }
+        }else{
+            $ret[] = array(
+                $attribute => $dir
+            );
+        }
+
+        return $ret;
     }
 
 }
