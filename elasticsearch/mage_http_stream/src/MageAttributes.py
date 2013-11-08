@@ -61,7 +61,7 @@ class MageAttributes(object):
         return self.__retrieve_value(query, attr_id)[0]
 
     def __retrieve_value(self, query, cache_tag_id = None, fetchall = None):
-        key = hashlib.md5(query).hexdigest()
+        key = hashlib.md5("{0}{1}".format(query,fetchall)).hexdigest()
         try:
             return self.cache[cache_tag_id][key]
         except KeyError:
