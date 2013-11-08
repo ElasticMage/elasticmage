@@ -2,7 +2,7 @@ import hashlib
 
 class MageAttributes(object):
 
-    # 'backend_type': 'frontend_type': 'elasticsearch_type'
+    # 'backend_type': 'frontend_input': 'elasticsearch_type'
     attribute_map = {
         "text": {
             "_default": {
