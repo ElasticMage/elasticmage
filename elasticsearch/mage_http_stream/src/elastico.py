@@ -82,11 +82,11 @@ if __name__ == "__main__":
     attributes = MageAttributes(connection)
 
     # Build index mapping if it doesn't exist
-    r = requests.head("http://localhost:9200/magehack1")
+    r = requests.head("http://localhost:9200/magehack")
     if r.status_code != 200:
         print "Building index mapping...\n"
         mapping = MageIndexMapper(attributes).buildProductIndexMap()
-        r = requests.post("http://localhost:9200/magehack1", json.dumps(mapping, default=default))
+        r = requests.post("http://localhost:9200/magehack", json.dumps(mapping, default=default))
         if r.status_code != 200:
             print "Failed to send mapping to elasticsearch:\n\n{0}".format(mapping)
         print "Completed!\n\n"
